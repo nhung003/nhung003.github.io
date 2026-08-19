@@ -20,9 +20,8 @@
   --gap:        2.75rem;
   --bar:        3.25rem;
 
-  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, sans-serif;
-  --mono: "SF Mono", "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  --font: "Times New Roman", Times, "Liberation Serif", "Nimbus Roman", serif;
+  --mono: "Times New Roman", Times, "Liberation Serif", "Nimbus Roman", serif;
 }
 
 /* Dark palette — applied by system preference unless the user forced light… */
@@ -73,8 +72,10 @@ body {
   background: var(--ground);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 15px;
-  line-height: 1.65;
+  /* Times has a small x-height — it needs a larger size than Inter did to
+     read at the same optical weight. */
+  font-size: 17px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -194,9 +195,9 @@ a:hover { border-bottom-color: var(--accent); }
 }
 
 .brand-name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -269,8 +270,9 @@ a:hover { border-bottom-color: var(--accent); }
   margin: 0;
   font-size: clamp(2rem, 6vw, 2.75rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
+  /* Serif faces do not want the negative tracking Inter needed. */
+  letter-spacing: 0;
+  line-height: 1.15;
 }
 
 .masthead .role {
@@ -312,8 +314,8 @@ a:hover { border-bottom-color: var(--accent); }
   display: block;
   font-size: 1.5rem;
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: 1.15;
+  letter-spacing: 0;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
@@ -480,8 +482,8 @@ section > h2 {
 .entry-head h3 {
   margin: 0;
   font-size: 1.0625rem;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 .entry-head .when {
@@ -516,11 +518,13 @@ section > h2 {
   font-weight: 650;
 }
 
-.project .stack {
+/* Used both inside a project card and directly under a role heading. */
+.stack {
   margin: 0.25rem 0 0;
   font-family: var(--mono);
-  font-size: 0.75rem;
-  line-height: 1.55;
+  font-size: 0.8125rem;
+  font-style: italic;
+  line-height: 1.5;
   color: var(--ink-faint);
 }
 
@@ -580,32 +584,29 @@ li strong {
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.3rem;
+  font-size: 0.9375rem;
 }
 
 .skill-row dd.prose {
   display: block;
-  font-size: 0.9375rem;
   color: var(--ink-soft);
 }
 
+/* Plain running text, separated by middle dots — no chips. */
 .tag {
-  display: inline-block;
-  padding: 0.15rem 0.6rem;
-  border-radius: 4px;
-  background: var(--panel);
-  border: 1px solid var(--rule);
-  font-family: var(--mono);
-  font-size: 0.75rem;
   color: var(--ink-soft);
   white-space: nowrap;
 }
 
+.tag:not(:last-child)::after {
+  content: " ·";
+  color: var(--ink-faint);
+}
+
 .tag.is-core {
-  background: var(--accent-bg);
-  border-color: transparent;
-  color: var(--accent);
-  font-weight: 600;
+  color: var(--ink);
+  font-weight: 700;
 }
 
 /* ---------- Interests ------------------------------------- */
@@ -691,25 +692,43 @@ li strong {
     --rule: #ccc;
     --accent: #000;
     --accent-bg: transparent;
-    --gap: 1.4rem;
+    --gap: 0.95rem;
   }
   body {
     padding: 0;
-    font-size: 10pt;
-    line-height: 1.42;
+    font-size: 9.75pt;
+    line-height: 1.28;
     background: #fff;
+  }
+  /* Keep the panel fills when printing to paper or PDF. */
+  .project, .colophon kbd {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .page { max-width: none; }
   a { color: inherit; border-bottom: 0; }
+  /* The stat tiles restate the summary — on paper that space is better spent
+     on the roles, so they are screen-only. */
   .skip, .progress, .topbar, .toast,
-  .cta-row, .copy-btn, .colophon { display: none; }
-  .stats { grid-template-columns: repeat(3, 1fr); margin-top: 0.9rem; }
-  .stats li { padding: 0.4rem 0.6rem; }
-  .stat-num { font-size: 1.1rem; }
+  .cta-row, .copy-btn, .colophon, .stats { display: none; }
+  .masthead { padding-bottom: 1rem; }
+  .masthead .summary { margin-top: 0.8rem; }
+  .contact { margin-top: 0.8rem; }
+  .project { margin-top: 0.55rem; padding: 0.45rem 0.75rem 0.5rem; }
+  .entry ul, .project ul { margin-top: 0.35rem; }
+  .entry li, .project li { margin-bottom: 0.2rem; }
+  .aside-head { margin-top: 0.9rem; }
+  .skill-row { padding: 0.45rem 0; }
   .reveal { opacity: 1; transform: none; }
-  .project, .entry, .skill-row, .stats { break-inside: avoid; }
+  /* Only the small rows stay whole. Protecting .entry or .project just leaves
+     a quarter-page hole and pushes the tail onto an extra sheet. */
+  .skill-row { break-inside: avoid; }
+  .project h4, .project .stack { break-after: avoid; }
+  .skill-row { grid-template-columns: 9rem 1fr; gap: 0.3rem 1rem; }
+  .skill-row dd { gap: 0.25rem; }
+  .entry-head { break-after: avoid; }
   .project:hover { box-shadow: none; }
   section > h2 { margin-bottom: 0.7rem; }
-  .tag { background: transparent; border-color: #bbb; color: #000; }
+  .tag { color: #000; }
   .tag.is-core { font-weight: 700; }
 }
